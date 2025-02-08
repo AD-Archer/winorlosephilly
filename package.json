@@ -1,0 +1,22 @@
+{
+  "name": "winorlose",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["Philadelphia Eagles", "Super Bowl", "Destruction Derby"],
+  "author": "ad-archer",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "phaser": "^3.87.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
