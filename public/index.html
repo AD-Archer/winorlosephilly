@@ -1,12 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Eagles Mayhem!</title>
+    <title>Philly Mayhem? Board Street Simulator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <style>
-        body { background: #004C54; color: #fff; font-family: Arial; text-align: center; }
-        #game { margin: 20px; padding: 20px; border: 3px solid #ACC0C6; }
+        body { 
+            background: #004C54; 
+            color: #fff; 
+            font-family: Arial; 
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overscroll-behavior: none;
+        }
+        #game { 
+            margin: 0 auto;
+            padding: 10px;
+            max-width: 800px;
+        }
         button { background: #ACC0C6; color: #004C54; padding: 10px; margin: 5px; }
-        .eagles-font { font-family: 'Impact', sans-serif; }
+        .eagles-font { 
+            font-family: 'Impact', sans-serif; 
+        }
+        @media (max-width: 768px) {
+            #game {
+                padding: 5px;
+            }
+        }
     </style>
 </head>
 <body>
