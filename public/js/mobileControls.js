@@ -10,13 +10,19 @@ export class MobileControls {
         this.lastTouchX = 0;
         this.lastTouchY = 0;
         this.lastShakeTime = 0;
+    }
+
+    init() {
+        if (!isMobile) return;
         this.setupMobileControls();
     }
 
     setupMobileControls() {
-        if (!isMobile) return;
-
         const clickArea = document.getElementById('clickArea');
+        if (!clickArea) {
+            console.error('Click area not found');
+            return;
+        }
         
         clickArea.addEventListener('touchstart', (e) => {
             this.lastTouchX = e.touches[0].clientX;
@@ -24,8 +30,10 @@ export class MobileControls {
         });
 
         clickArea.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            this.handleSwipeGesture(e);
+            if (e.cancelable) {
+                e.preventDefault();
+                this.handleSwipeGesture(e);
+            }
         }, { passive: false });
 
         window.addEventListener('devicemotion', this.handleShake.bind(this));
@@ -76,11 +84,7 @@ export class MobileControls {
             }
         }
     }
-
-    init() {
-        if (!isMobile) return;
-        this.setupMobileControls();
-    }
 }
 
+// Create a single instance but don't initialize until needed
 export const mobileControls = new MobileControls(); 

@@ -1,4 +1,4 @@
-import { targets } from './constants.js';
+import { targets, powerUps } from './constants.js';
 import { gameState } from './gameState.js';
 import { soundManager } from './soundManager.js';
 import { createExplosion } from './effects.js';
@@ -6,11 +6,16 @@ import { powerUpManager } from './powerUpManager.js';
 
 export class TargetManager {
     constructor() {
-        this.clickArea = document.getElementById('clickArea');
+        this.clickArea = null;
     }
 
     init() {
         this.clickArea = document.getElementById('clickArea');
+        if (!this.clickArea) {
+            console.error('Click area not found');
+            return false;
+        }
+        return true;
     }
 
     spawnNewWave() {
@@ -37,7 +42,7 @@ export class TargetManager {
             const targetData = targets[type][Math.floor(Math.random() * targets[type].length)];
             const currentHealth = targetData.health * (1 + (gameState.level - 1) * 0.2);
             
-            const target = this.createTargetElement(targetData, currentHealth, areaRect, targetSize, padding);
+            const target = this.createTargetElement(targetData, currentHealth, areaRect, targetSize, padding, type);
             gameState.activeTargets.push({
                 element: target,
                 health: currentHealth,
@@ -48,12 +53,12 @@ export class TargetManager {
         }
     }
 
-    createTargetElement(targetData, currentHealth, areaRect, targetSize, padding) {
+    createTargetElement(targetData, currentHealth, areaRect, targetSize, padding, type) {
         const target = document.createElement('div');
         const maxLeft = areaRect.width - targetSize - padding;
         const maxTop = areaRect.height - targetSize - padding;
         
-        target.className = `target ${targetData.type}`;
+        target.className = `target ${type}`;
         target.innerHTML = `
             <div class="target-icon">${targetData.icon}</div>
             <div class="health-bar">

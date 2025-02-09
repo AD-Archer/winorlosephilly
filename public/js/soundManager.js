@@ -4,105 +4,96 @@ export class SoundManager {
     constructor() {
         this.sounds = {};
         this.muted = localStorage.getItem('soundMuted') === 'true';
+        this.soundsLoaded = false;
     }
 
     async initAudio() {
-        // Play a silent sound to enable audio
-        const silentSound = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//MUZAAAAAGkAAAAAAAAA0gAAAAATEFN//MUZAMAAAGkAAAAAAAAA0gAAAAARTMu//MUZAYAAAGkAAAAAAAAA0gAAAAAOTku//MUZAkAAAGkAAAAAAAAA0gAAAAANVVV");
-        await silentSound.play();
-        return this.init();
+        try {
+            console.log('Initializing audio');
+            const silentSound = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//MUZAAAAAGkAAAAAAAAA0gAAAAATEFN//MUZAMAAAGkAAAAAAAAA0gAAAAARTMu//MUZAYAAAGkAAAAAAAAA0gAAAAAOTku//MUZAkAAAGkAAAAAAAAA0gAAAAANVVV");
+            await silentSound.play();
+            console.log('Silent sound played successfully');
+            await this.loadSounds();
+            console.log('Audio initialization complete');
+            return true;
+        } catch (error) {
+            console.error('Error initializing audio:', error);
+            this.muted = true; // Mute if audio fails to initialize
+            return false;
+        }
     }
 
-    init() {
-        Object.entries(SOUNDS).forEach(([key, config]) => {
-            console.log(`Loading sound: ${key}`);
-            const audio = new Audio(config.src);
-            audio.volume = config.volume;
-            
-            audio.addEventListener('error', (e) => {
-                console.error(`Error loading sound ${key}:`, e);
-            });
-            
-            audio.addEventListener('canplaythrough', () => {
+    async loadSounds() {
+        const loadPromises = Object.entries(SOUNDS).map(async ([key, config]) => {
+            try {
+                const audio = new Audio(config.src);
+                audio.volume = config.volume;
+                
+                // Create a promise that resolves when the audio is loaded
+                await new Promise((resolve, reject) => {
+                    audio.addEventListener('canplaythrough', resolve);
+                    audio.addEventListener('error', reject);
+                    // Set a timeout in case loading takes too long
+                    setTimeout(reject, 5000);
+                });
+                
+                this.sounds[key] = audio;
                 console.log(`Sound ${key} loaded successfully`);
-            });
-            
-            this.sounds[key] = audio;
+            } catch (error) {
+                console.warn(`Failed to load sound ${key}:`, error);
+            }
         });
-        
-        this.addMuteButton();
+
+        try {
+            await Promise.all(loadPromises);
+            this.soundsLoaded = true;
+        } catch (error) {
+            console.error('Error loading sounds:', error);
+            this.soundsLoaded = false;
+        }
     }
 
     addMuteButton() {
-        const muteBtn = document.createElement('button');
-        muteBtn.id = 'muteButton';
-        muteBtn.className = 'control-button';
-        muteBtn.innerHTML = this.muted ? '🔇' : '🔊';
-        muteBtn.onclick = () => this.toggleMute();
-        document.getElementById('gameStats').appendChild(muteBtn);
+        const gameStats = document.getElementById('gameStats');
+        if (!gameStats) {
+            console.error('gameStats element not found');
+            return;
+        }
+
+        if (!document.getElementById('muteButton')) {
+            const muteBtn = document.createElement('button');
+            muteBtn.id = 'muteButton';
+            muteBtn.className = 'control-button';
+            muteBtn.innerHTML = this.muted ? '🔇' : '🔊';
+            muteBtn.onclick = () => this.toggleMute();
+            gameStats.appendChild(muteBtn);
+        }
     }
 
     play(soundName) {
-        if (this.muted || !this.sounds[soundName]) {
-            console.log(`Sound ${soundName} not played: ${this.muted ? 'muted' : 'not found'}`);
+        if (this.muted || !this.sounds[soundName] || !this.soundsLoaded) {
             return;
         }
         
-        const sound = this.sounds[soundName].cloneNode();
-        sound.volume = SOUNDS[soundName].volume;
-        
-        sound.play()
-            .then(() => {
-                console.log(`Playing sound: ${soundName}`);
-            })
-            .catch(this.handlePlayError.bind(this));
-            
-        sound.onended = () => {
-            console.log(`Sound ${soundName} finished playing`);
-            sound.remove();
-        };
-    }
-
-    handlePlayError(err) {
-        console.error('Sound play failed:', err);
-        if (err.name === 'NotAllowedError') {
-            this.createStartButton();
+        try {
+            const sound = this.sounds[soundName].cloneNode();
+            sound.volume = SOUNDS[soundName].volume;
+            sound.play().catch(err => {
+                console.warn(`Failed to play sound ${soundName}:`, err);
+            });
+            sound.onended = () => sound.remove();
+        } catch (error) {
+            console.warn(`Error playing sound ${soundName}:`, error);
         }
-    }
-
-    createStartButton() {
-        if (!document.getElementById('startButton')) {
-            const startBtn = document.createElement('button');
-            startBtn.id = 'startButton';
-            startBtn.className = 'start-button';
-            startBtn.textContent = 'RESULTS!';
-            startBtn.onclick = this.handleStartClick.bind(this);
-            
-            // Add some extra styling for better visibility
-            startBtn.style.fontSize = '2em';
-            startBtn.style.padding = '20px 40px';
-            startBtn.style.marginTop = '30px';
-            
-            document.getElementById('output').appendChild(startBtn);
-        }
-    }
-
-    handleStartClick() {
-        const silentSound = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//MUZAAAAAGkAAAAAAAAA0gAAAAATEFN//MUZAMAAAGkAAAAAAAAA0gAAAAARTMu//MUZAYAAAGkAAAAAAAAA0gAAAAAOTku//MUZAkAAAGkAAAAAAAAA0gAAAAANVVV");
-        silentSound.play().then(() => {
-            document.getElementById('startButton').remove();
-            if (typeof window.startGame === 'function') {
-                window.startGame();
-            } else {
-                console.error('startGame function not found');
-            }
-        });
     }
 
     toggleMute() {
         this.muted = !this.muted;
         localStorage.setItem('soundMuted', this.muted);
-        document.getElementById('muteButton').innerHTML = this.muted ? '🔇' : '🔊';
+        const muteButton = document.getElementById('muteButton');
+        if (muteButton) {
+            muteButton.innerHTML = this.muted ? '🔇' : '🔊';
+        }
     }
 }
 

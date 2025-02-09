@@ -4,10 +4,21 @@ import { soundManager } from './soundManager.js';
 
 export class PowerUpManager {
     constructor() {
+        this.clickArea = null;
+    }
+
+    init() {
         this.clickArea = document.getElementById('clickArea');
+        if (!this.clickArea) {
+            console.error('Click area not found');
+            return false;
+        }
+        return true;
     }
 
     spawnPowerUp() {
+        if (!this.clickArea) return;
+        
         if(Math.random() < 0.1 && !gameState.activePowerUp) {
             const powerUpTypes = Object.keys(powerUps);
             const type = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];

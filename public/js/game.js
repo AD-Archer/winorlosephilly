@@ -11,26 +11,29 @@ class Game {
     constructor() {
         createStyles();
         this.initializeUI();
+        // Bind the setupGame method to this instance
+        this.boundSetupGame = this.setupGame.bind(this);
     }
 
     initializeUI() {
-        document.getElementById('output').innerHTML = `
-            <h1 class="eagles-font">The big game is over ready to see the results?</h1>
-            <div id="gameStats">
-                <div>High Score: <span id="highScoreDisplay">${gameState.highScore}</span></div>
-            </div>
-        `;
+        uiManager.showWelcomeScreen();
         
-        // Create start button that will enable sound and start game
-        uiManager.createStartButton(() => {
-            soundManager.initAudio().then(() => {
+        // Create start button with proper binding
+        uiManager.createStartButton(async () => {
+            try {
+                console.log('Start button clicked');
+                await soundManager.initAudio();
+                console.log('Audio initialized');
                 uiManager.removeStartButton();
-                this.setupGame();
-            });
+                this.boundSetupGame();
+            } catch (error) {
+                console.error('Error starting game:', error);
+            }
         });
     }
 
     setupGame() {
+        console.log('Setting up game');
         gameState.gameResult = Math.random() < 0.85 ? 'win' : 'lose';
         const scenario = scenarios[gameState.gameResult][
             Math.floor(Math.random() * scenarios[gameState.gameResult].length)
@@ -48,12 +51,14 @@ class Game {
             <div id="comboDisplay"></div>
         `;
 
-        // Initialize all game systems
-        soundManager.init();
+        // Add mute button after gameStats exists
+        soundManager.addMuteButton();
+
+        console.log('Initializing game systems');
         mobileControls.init();
         targetManager.init();
+        powerUpManager.init();
         
-        // Setup click area events
         const clickArea = document.getElementById('clickArea');
         clickArea.addEventListener('click', (e) => {
             if (e.target === clickArea) {
@@ -61,9 +66,9 @@ class Game {
             }
         });
 
-        // Start first wave
         targetManager.spawnNewWave();
         this.startPowerUpSpawning();
+        console.log('Game setup complete');
     }
 
     startPowerUpSpawning() {
@@ -73,4 +78,8 @@ class Game {
     }
 }
 
-window.onload = () => new Game(); 
+// Create game instance
+window.onload = () => {
+    console.log('Window loaded, creating game instance');
+    new Game();
+}; 

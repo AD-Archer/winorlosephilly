@@ -246,6 +246,71 @@ export function createStyles() {
         margin: 20px 0;
         font-style: italic;
     }
+
+    .warning-message {
+        background: #ffeb3b;
+        color: #000;
+        padding: 15px;
+        margin: 20px auto;
+        max-width: 600px;
+        border-radius: 8px;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .info-section {
+        background: rgba(0, 76, 84, 0.9);
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 800px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .info-section h2 {
+        color: #ACC0C6;
+        margin-bottom: 20px;
+        font-family: 'Impact', sans-serif;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        text-align: left;
+    }
+
+    .info-item {
+        background: rgba(172, 192, 198, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .info-item h3 {
+        color: #ACC0C6;
+        margin-bottom: 10px;
+        font-family: 'Impact', sans-serif;
+    }
+
+    .info-item ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .info-item li {
+        margin: 8px 0;
+        color: #fff;
+    }
+
+    @media (max-width: ${MOBILE_BREAKPOINT}px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .info-item {
+            padding: 10px;
+        }
+    }
     `;
 
     document.head.appendChild(style);
