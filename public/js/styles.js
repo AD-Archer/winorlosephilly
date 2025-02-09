@@ -515,6 +515,27 @@ export function createStyles() {
         from { opacity: 0.8; }
         to { opacity: 0; }
     }
+
+    #timerContainer {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    #timerDisplay {
+        color: #4CAF50;
+    }
+
+    #timerDisplay.timer-warning {
+        color: #ff4444;
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
     `;
 
     document.head.appendChild(style);

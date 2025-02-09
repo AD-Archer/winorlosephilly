@@ -3,6 +3,7 @@ import { gameState } from './gameState.js';
 import { soundManager } from './soundManager.js';
 import { createExplosion } from './effects.js';
 import { powerUpManager } from './powerUpManager.js';
+import { timerManager } from './timerManager.js';
 
 export class TargetManager {
     constructor() {
@@ -26,7 +27,9 @@ export class TargetManager {
             gameState.level++;
             soundManager.play('levelUp');
             
-            // Check if it's a boss level (every 5 levels)
+            // Start new level timer
+            timerManager.startTimer(gameState.level);
+            
             if (gameState.level % 5 === 0) {
                 this.spawnBossWave();
             } else {
@@ -321,6 +324,7 @@ export class TargetManager {
                 clearInterval(this.targetMovementInterval);
                 this.targetMovementInterval = null;
             }
+            timerManager.clearTimer(); // Clear timer before spawning new wave
         }
     }
 }

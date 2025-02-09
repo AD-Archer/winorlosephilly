@@ -6,6 +6,7 @@ import { soundManager } from './soundManager.js';
 import { mobileControls } from './mobileControls.js';
 import { scenarios } from './constants.js';
 import { uiManager } from './uiManager.js';
+import { timerManager } from './timerManager.js';
 
 class Game {
     constructor() {
@@ -55,9 +56,10 @@ class Game {
         soundManager.addMuteButton();
 
         console.log('Initializing game systems');
-        mobileControls.init();
+        timerManager.init();
         targetManager.init();
         powerUpManager.init();
+        mobileControls.init();
         
         const clickArea = document.getElementById('clickArea');
         clickArea.addEventListener('click', (e) => {
