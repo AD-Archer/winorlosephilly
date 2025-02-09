@@ -1,3 +1,5 @@
+import { gameState } from './gameState.js'; // Ensure this import is present
+
 export class TimerManager {
     constructor() {
         this.timer = null;
@@ -57,6 +59,7 @@ export class TimerManager {
 
     onTimeUp() {
         this.clearTimer();
+        gameState.gameResult = 'lose'; // Set game result to lose
         alert(`Time's up! Game Over!\nFinal Score: ${gameState.score}`);
         location.reload(); // Restart the game
     }

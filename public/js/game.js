@@ -79,6 +79,11 @@ class Game {
 
     setupGame() {
         console.log('Setting up game');
+        gameState.reset(); // Reset the game state
+
+        // Start the timer with the current level
+        timerManager.startTimer(gameState.level); // Start the timer with the current level
+
         gameState.gameResult = Math.random() < 0.85 ? 'win' : 'lose';
         const scenario = scenarios[gameState.gameResult][
             Math.floor(Math.random() * scenarios[gameState.gameResult].length)
