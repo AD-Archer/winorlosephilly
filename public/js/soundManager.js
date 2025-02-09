@@ -33,20 +33,23 @@ export class SoundManager {
     }
 
     async loadSounds() {
+        console.log('Loading sounds...');
         const loadPromises = Object.entries(SOUNDS).map(async ([key, config]) => {
             try {
                 const audio = new Audio(config.src);
                 audio.volume = config.volume;
                 
-                if (key === 'background') {
-                    audio.loop = true;  // Use native loop
-                    this.backgroundMusic = audio;
+                if (config.loop) {
+                    audio.loop = true;
                 }
                 
                 await new Promise((resolve, reject) => {
                     audio.addEventListener('canplaythrough', resolve);
-                    audio.addEventListener('error', reject);
-                    setTimeout(reject, 5000);
+                    audio.addEventListener('error', (e) => {
+                        console.error(`Error loading sound ${key}:`, e);
+                        reject(e);
+                    });
+                    audio.load(); // Explicitly load the audio
                 });
                 
                 this.sounds[key] = audio;
@@ -60,6 +63,7 @@ export class SoundManager {
             await Promise.all(loadPromises);
             this.soundsLoaded = true;
             this.playBackgroundMusic();
+            console.log('All sounds loaded successfully');
         } catch (error) {
             console.error('Error loading sounds:', error);
             this.soundsLoaded = false;
@@ -118,10 +122,18 @@ export class SoundManager {
         try {
             const sound = this.sounds[soundName].cloneNode();
             sound.volume = SOUNDS[soundName].volume * this.effectsVolume;
-            sound.play().catch(err => {
-                console.warn(`Failed to play sound ${soundName}:`, err);
-            });
-            sound.onended = () => sound.remove();
+            
+            const promise = sound.play();
+            if (promise) {
+                promise.catch(err => {
+                    console.warn(`Failed to play sound ${soundName}:`, err);
+                });
+            }
+            
+            // Clean up after sound finishes
+            sound.onended = () => {
+                sound.remove();
+            };
         } catch (error) {
             console.warn(`Error playing sound ${soundName}:`, error);
         }

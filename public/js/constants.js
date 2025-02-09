@@ -28,6 +28,7 @@ export const powerUps = {
 
 export const BOSS_IMAGES = [
     '/images/traviskelce.jpg',
+    '/images/mahomes.jpg',
     '/images/izaiahgathings.jpg',
     '/images/tyreekhill.jpg',
     '/images/taylor.jpg',
@@ -53,7 +54,7 @@ export const targets = {
 
 export const SOUNDS = {
     click: {
-        src: 'sounds/click.wav',
+        src: 'sounds/select.wav',
         volume: 0.5
     },
     destroy: {
@@ -65,16 +66,20 @@ export const SOUNDS = {
         volume: 0.7
     },
     levelUp: {
-        src: 'sounds/levelup.wav',
+        src: 'sounds/level-up.wav',
         volume: 0.8
     },
     eagleScream: {
-        src: 'sounds/eagle.wav',
+        src: 'sounds/hawk.wav',
         volume: 0.6
+    },
+    swipe: {
+        src: 'sounds/swipe.wav',
+        volume: 0.5
     },
     background: {
         src: 'sounds/blow.wav',
-        volume: 0.3,  // Lower volume for background music
-        loop: true    // Enable looping
+        volume: 0.3,
+        loop: true
     }
 }; 
