@@ -6,7 +6,8 @@ export class GameState {
 
     reset() {
         this.score = 0;
-        this.level = 1;
+        this.level = 1; // Ensure the level starts at 1
+        console.log(`Game reset: Score = ${this.score}, Level = ${this.level}`); // Debug log
         this.combo = 1;
         this.misses = 0;  // Add miss counter
         this.highScore = parseInt(localStorage.getItem('highScore')) || 0;
@@ -21,6 +22,11 @@ export class GameState {
             localStorage.setItem('highScore', this.highScore);
         }
         
+        // Check if the score warrants a level increase
+        if (this.score >= 100 * this.level) {
+            this.increaseLevel(); // Call to increase level
+        }
+
         document.getElementById('scoreDisplay').textContent = this.score;
         document.getElementById('highScoreDisplay').textContent = this.highScore;
     }
@@ -59,6 +65,7 @@ export class GameState {
 
     increaseLevel() {
         this.level++;
+        console.log(`Level increased to: ${this.level}`); // Log the new level to the console
         this.updateDisplay(); // Ensure the display updates when the level increases
     }
 }

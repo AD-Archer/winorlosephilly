@@ -306,8 +306,16 @@ export class TargetManager {
         targetInfo.element.remove();
         
         gameState.activeTargets = gameState.activeTargets.filter(t => t !== targetInfo);
-        this.spawnNewWave();
         
+        // Check if all targets are cleared
+        if (gameState.activeTargets.length === 0) {
+            gameState.increaseLevel(); // Call to increase level
+            document.getElementById('levelDisplay').textContent = `${gameState.level}`; // Update UI
+            
+            // Spawn new wave after increasing level
+            this.spawnNewWave(); // Ensure new targets spawn
+        }
+
         // Clear boss movement if it was the last boss
         if (gameState.activeTargets.length === 0 && this.bossMovementInterval) {
             clearInterval(this.bossMovementInterval);

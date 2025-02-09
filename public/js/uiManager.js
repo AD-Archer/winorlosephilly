@@ -17,10 +17,15 @@ export class UIManager {
     }
 
     setupGame() {
-        
         const gameStats = document.getElementById('gameStats');
         if (gameStats) {
             gameStats.appendChild(this.createSoundControls());
+
+            // Create and append the level display element
+            const levelDisplay = document.createElement('div');
+            levelDisplay.id = 'levelDisplay';
+            levelDisplay.textContent = `Level: ${gameState.level}`; // Initial level display
+            gameStats.appendChild(levelDisplay); // Append to gameStats
         }
     }
 
@@ -163,7 +168,7 @@ export class UIManager {
     updateDisplay() {
         document.getElementById('scoreDisplay').textContent = gameState.score;
         document.getElementById('highScoreDisplay').textContent = gameState.highScore;
-        document.getElementById('levelDisplay').textContent = gameState.level;
+        document.getElementById('levelDisplay').textContent = `Level: ${gameState.level}`; // Update level display
     }
 }
 

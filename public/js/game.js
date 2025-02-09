@@ -81,6 +81,16 @@ class Game {
         console.log('Setting up game');
         gameState.reset(); // Reset the game state
 
+        const levelDisplayElement = document.getElementById('levelDisplay');
+        console.log(levelDisplayElement); // Check if the element exists
+
+        // Update the UI with the new level
+        if (levelDisplayElement) {
+            levelDisplayElement.textContent = `Level: ${gameState.level}`;
+        } else {
+            console.error('levelDisplay element not found');
+        }
+
         // Start the timer with the current level
         timerManager.startTimer(gameState.level); // Start the timer with the current level
 
@@ -123,6 +133,8 @@ class Game {
         targetManager.spawnNewWave();
         this.startPowerUpSpawning();
         console.log('Game setup complete');
+
+        console.log(`Current Score: ${gameState.score}, Current Level: ${gameState.level}`);
     }
 
     startPowerUpSpawning() {
@@ -136,4 +148,5 @@ class Game {
 window.onload = () => {
     console.log('Window loaded, creating game instance');
     new Game();
-}; 
+};
+
