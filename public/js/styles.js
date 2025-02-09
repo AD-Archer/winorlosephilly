@@ -42,6 +42,7 @@ export function createStyles() {
     .target-icon {
         font-size: ${isMobile ? '1.5em' : '2em'};
         text-align: center;
+        transition: transform 0.2s;
     }
     
     .target:hover {
@@ -430,6 +431,70 @@ export function createStyles() {
 
     .info-item.disclaimer a:hover {
         color: #fff;
+    }
+
+    .target.special {
+        transition: none;
+    }
+
+    .target[data-moves='true'] {
+        animation: float 2s infinite ease-in-out;
+    }
+
+    .target[data-moves='true'] .target-icon {
+        filter: drop-shadow(0 0 5px #ACC0C6);
+    }
+
+    .target[data-moves='true']:after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 4px;
+        background: rgba(172, 192, 198, 0.3);
+        border-radius: 50%;
+        animation: shadow-pulse 2s infinite ease-in-out;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
+    }
+
+    @keyframes shadow-pulse {
+        0%, 100% { 
+            transform: translateX(-50%) scale(1);
+            opacity: 0.3;
+        }
+        50% { 
+            transform: translateX(-50%) scale(0.8);
+            opacity: 0.1;
+        }
+    }
+
+    .target[data-moves='true'] .trail {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(172, 192, 198, 0.2);
+        pointer-events: none;
+        animation: fade-out 0.5s forwards;
+    }
+
+    @keyframes fade-out {
+        from { opacity: 0.5; transform: scale(1); }
+        to { opacity: 0; transform: scale(0.5); }
+    }
+
+    .misses {
+        color: #ff4444;
+        font-size: 0.8em;
+        opacity: 0.8;
     }
     `;
 

@@ -36,13 +36,13 @@ export const BOSS_IMAGES = [
 export const targets = {
     basic: [
         { name: 'trash_can', icon: '🗑️', points: 10, health: 2 },
-        { name: 'street_light', icon: '🏮', points: 15, health: 3 },
+        { name: 'street_light', icon: '🏮', points: 15, health: 3, moves: true, speed: 1 },
         { name: 'hydrant', icon: '🚰', points: 20, health: 4 }
     ],
     special: [
-        { name: 'pretzel_cart', icon: '🥨', points: 50, health: 8 },
+        { name: 'pretzel_cart', icon: '🥨', points: 50, health: 8, moves: true, speed: 2 },
         { name: 'news_stand', icon: '📰', points: 75, health: 10 },
-        { name: 'food_truck', icon: '🚚', points: 100, health: 15 }
+        { name: 'food_truck', icon: '🚚', points: 100, health: 15, moves: true, speed: 1.5 }
     ],
     boss: [
         { name: 'city_hall', icon: null, points: 500, health: 50, isImageBoss: true },

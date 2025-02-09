@@ -1,14 +1,17 @@
 // Manages game state and core variables
 export class GameState {
     constructor() {
-        this.destructionCount = 0;
-        this.combo = 1;
-        this.gameResult = null;
+        this.reset();
+    }
+
+    reset() {
         this.score = 0;
-        this.highScore = localStorage.getItem('highScore') || 0;
-        this.activePowerUp = null;
         this.level = 1;
+        this.combo = 1;
+        this.misses = 0;  // Add miss counter
+        this.highScore = parseInt(localStorage.getItem('highScore')) || 0;
         this.activeTargets = [];
+        this.activePowerUp = null;
     }
 
     updateScore(points) {
@@ -17,7 +20,9 @@ export class GameState {
             this.highScore = this.score;
             localStorage.setItem('highScore', this.highScore);
         }
-        this.updateDisplay();
+        
+        document.getElementById('scoreDisplay').textContent = this.score;
+        document.getElementById('highScoreDisplay').textContent = this.highScore;
     }
 
     updateDisplay() {
@@ -27,19 +32,28 @@ export class GameState {
     }
 
     updateComboDisplay() {
-        document.getElementById('comboDisplay').innerHTML = `
-            COMBO MULTIPLIER: x${this.combo.toFixed(1)}<br>
-            ${'🦅'.repeat(Math.floor(this.combo))}
-        `;
-    }
-
-    resetCombo() {
-        this.combo = 1;
-        this.updateComboDisplay();
+        const comboDisplay = document.getElementById('comboDisplay');
+        if (comboDisplay) {
+            comboDisplay.innerHTML = `
+                COMBO MULTIPLIER: x${this.combo.toFixed(1)}<br>
+                ${'🦅'.repeat(Math.floor(this.combo))}
+                ${this.misses > 0 ? `<br><span class="misses">(${3 - this.misses} misses left)</span>` : ''}
+            `;
+        }
     }
 
     increaseCombo() {
-        this.combo = Math.min(this.combo + 0.2, 5);
+        this.combo = Math.min(this.combo + 0.2, 5); // Increment by 0.2, max of 5
+        this.misses = 0;  // Reset misses on successful hit
+        this.updateComboDisplay();
+    }
+
+    resetCombo() {
+        this.misses++;
+        if (this.misses >= 3) {  // Only reset combo after 3 misses
+            this.combo = 1;
+            this.misses = 0;
+        }
         this.updateComboDisplay();
     }
 }

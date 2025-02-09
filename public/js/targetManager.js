@@ -8,6 +8,7 @@ export class TargetManager {
     constructor() {
         this.clickArea = null;
         this.bossMovementInterval = null;
+        this.targetMovementInterval = null;
     }
 
     init() {
@@ -16,6 +17,7 @@ export class TargetManager {
             console.error('Click area not found');
             return false;
         }
+        this.startTargetMovement();
         return true;
     }
 
@@ -77,7 +79,11 @@ export class TargetManager {
                 health: currentHealth,
                 maxHealth: currentHealth,
                 points: targetData.points,
-                type: type
+                type: type,
+                moves: targetData.moves,
+                speed: targetData.speed || 0,
+                dx: targetData.moves ? (Math.random() > 0.5 ? 1 : -1) * targetData.speed : 0,
+                dy: targetData.moves ? (Math.random() > 0.5 ? 1 : -1) * targetData.speed : 0
             });
         }
     }
@@ -88,6 +94,10 @@ export class TargetManager {
         const maxTop = areaRect.height - targetSize - padding;
         
         target.className = `target ${type}`;
+        if (targetData.moves) {
+            target.setAttribute('data-moves', 'true');
+        }
+        
         target.innerHTML = `
             <div class="target-icon">${targetData.icon}</div>
             <div class="health-bar">
@@ -182,6 +192,61 @@ export class TargetManager {
         element.style.top = `${top}px`;
     }
 
+    startTargetMovement() {
+        if (this.targetMovementInterval) {
+            clearInterval(this.targetMovementInterval);
+        }
+
+        this.targetMovementInterval = setInterval(() => {
+            gameState.activeTargets.forEach(target => {
+                if (target.moves) {
+                    this.moveTarget(target);
+                }
+            });
+        }, 16); // ~60fps
+    }
+
+    moveTarget(target) {
+        const element = target.element;
+        const rect = this.clickArea.getBoundingClientRect();
+        const targetRect = element.getBoundingClientRect();
+        
+        let left = parseFloat(element.style.left);
+        let top = parseFloat(element.style.top);
+        
+        // Create trail effect
+        const trail = document.createElement('div');
+        trail.className = 'trail';
+        trail.style.left = `${left + targetRect.width / 2}px`;
+        trail.style.top = `${top + targetRect.height / 2}px`;
+        this.clickArea.appendChild(trail);
+        setTimeout(() => trail.remove(), 500);
+        
+        // Update position
+        left += target.dx;
+        top += target.dy;
+        
+        // Bounce off walls
+        if (left <= 0 || left + targetRect.width >= rect.width) {
+            target.dx *= -1;
+            this.flipTargetIcon(element, target.dx > 0);
+        }
+        if (top <= 0 || top + targetRect.height >= rect.height) {
+            target.dy *= -1;
+        }
+        
+        // Apply new position
+        element.style.left = `${left}px`;
+        element.style.top = `${top}px`;
+    }
+
+    flipTargetIcon(element, facingRight) {
+        const icon = element.querySelector('.target-icon');
+        if (icon) {
+            icon.style.transform = facingRight ? 'scaleX(1)' : 'scaleX(-1)';
+        }
+    }
+
     hitTarget(targetInfo) {
         const damage = gameState.combo * (gameState.activePowerUp ? 
             powerUps[gameState.activePowerUp].multiplier : 1);
@@ -189,6 +254,27 @@ export class TargetManager {
         
         this.updateTargetVisuals(targetInfo, damage);
         soundManager.play('click');
+        
+        // Add special hit effect for moving targets
+        if (targetInfo.moves) {
+            const element = targetInfo.element;
+            element.style.animation = 'none';
+            element.offsetHeight; // Trigger reflow
+            element.style.animation = 'float 2s infinite ease-in-out';
+            
+            const flash = document.createElement('div');
+            flash.className = 'flash';
+            flash.style.cssText = `
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: white;
+                opacity: 0.8;
+                pointer-events: none;
+            `;
+            element.appendChild(flash);
+            setTimeout(() => flash.remove(), 100);
+        }
         
         if (targetInfo.health <= 0) {
             soundManager.play('destroy');
@@ -230,6 +316,18 @@ export class TargetManager {
         if (gameState.activeTargets.length === 0 && this.bossMovementInterval) {
             clearInterval(this.bossMovementInterval);
             this.bossMovementInterval = null;
+        }
+        
+        // Clear movement intervals if no targets left
+        if (gameState.activeTargets.length === 0) {
+            if (this.bossMovementInterval) {
+                clearInterval(this.bossMovementInterval);
+                this.bossMovementInterval = null;
+            }
+            if (this.targetMovementInterval) {
+                clearInterval(this.targetMovementInterval);
+                this.targetMovementInterval = null;
+            }
         }
     }
 }

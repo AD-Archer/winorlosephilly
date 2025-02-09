@@ -19,7 +19,7 @@ export class PowerUpManager {
     spawnPowerUp() {
         if (!this.clickArea) return;
         
-        if(Math.random() < 0.1 && !gameState.activePowerUp) {
+        if(Math.random() < 0.05 && !gameState.activePowerUp) {
             const powerUpTypes = Object.keys(powerUps);
             const type = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
             const powerUp = this.createPowerUpElement(type);
