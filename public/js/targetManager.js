@@ -1,4 +1,4 @@
-import { targets, powerUps } from './constants.js';
+import { targets, powerUps, BOSS_IMAGES } from './constants.js';
 import { gameState } from './gameState.js';
 import { soundManager } from './soundManager.js';
 import { createExplosion } from './effects.js';
@@ -7,6 +7,7 @@ import { powerUpManager } from './powerUpManager.js';
 export class TargetManager {
     constructor() {
         this.clickArea = null;
+        this.bossMovementInterval = null;
     }
 
     init() {
@@ -23,14 +24,42 @@ export class TargetManager {
             gameState.level++;
             soundManager.play('levelUp');
             
-            const numBasic = Math.min(3 + Math.floor(gameState.level/2), 8);
-            const numSpecial = Math.min(Math.floor(gameState.level/3), 3);
-            const numBoss = gameState.level % 5 === 0 ? 1 : 0;
-            
-            this.spawnTargets('basic', numBasic);
-            this.spawnTargets('special', numSpecial);
-            if (numBoss > 0) this.spawnTargets('boss', numBoss);
+            // Check if it's a boss level (every 5 levels)
+            if (gameState.level % 5 === 0) {
+                this.spawnBossWave();
+            } else {
+                const numBasic = Math.min(3 + Math.floor(gameState.level/2), 8);
+                const numSpecial = Math.min(Math.floor(gameState.level/3), 3);
+                
+                this.spawnTargets('basic', numBasic);
+                this.spawnTargets('special', numSpecial);
+            }
         }
+    }
+
+    spawnBossWave() {
+        const areaRect = this.clickArea.getBoundingClientRect();
+        const targetSize = 120; // Bigger size for bosses
+        const padding = targetSize / 2;
+        
+        // Choose random boss and image
+        const bossData = targets.boss[Math.floor(Math.random() * targets.boss.length)];
+        const bossImage = BOSS_IMAGES[Math.floor(Math.random() * BOSS_IMAGES.length)];
+        
+        const target = this.createBossElement(bossData, bossImage, areaRect, targetSize, padding);
+        
+        gameState.activeTargets.push({
+            element: target,
+            health: bossData.health * (1 + (gameState.level - 1) * 0.2),
+            maxHealth: bossData.health * (1 + (gameState.level - 1) * 0.2),
+            points: bossData.points,
+            type: 'boss',
+            dx: 2, // Movement speed X
+            dy: 2  // Movement speed Y
+        });
+
+        // Start boss movement
+        this.startBossMovement();
     }
 
     spawnTargets(type, count) {
@@ -81,6 +110,78 @@ export class TargetManager {
         return target;
     }
 
+    createBossElement(bossData, imageUrl, areaRect, targetSize, padding) {
+        const target = document.createElement('div');
+        const maxLeft = areaRect.width - targetSize - padding;
+        const maxTop = areaRect.height - targetSize - padding;
+        
+        target.className = 'target boss';
+        target.innerHTML = `
+            <img src="${imageUrl}" alt="Boss" class="boss-image"/>
+            <div class="health-bar">
+                <div class="health-fill" style="width: 100%"></div>
+            </div>
+        `;
+        
+        target.style.cssText = `
+            left: ${Math.max(padding, Math.random() * maxLeft)}px;
+            top: ${Math.max(padding, Math.random() * maxTop)}px;
+            width: ${targetSize}px;
+            height: ${targetSize}px;
+        `;
+        
+        target.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const targetInfo = gameState.activeTargets.find(t => t.element === target);
+            if (targetInfo) {
+                this.hitTarget(targetInfo);
+            }
+        });
+        
+        this.clickArea.appendChild(target);
+        return target;
+    }
+
+    startBossMovement() {
+        if (this.bossMovementInterval) {
+            clearInterval(this.bossMovementInterval);
+        }
+
+        this.bossMovementInterval = setInterval(() => {
+            gameState.activeTargets.forEach(target => {
+                if (target.type === 'boss') {
+                    this.moveBoss(target);
+                }
+            });
+        }, 16); // ~60fps
+    }
+
+    moveBoss(bossTarget) {
+        const element = bossTarget.element;
+        const rect = this.clickArea.getBoundingClientRect();
+        const bossRect = element.getBoundingClientRect();
+        
+        let left = parseFloat(element.style.left);
+        let top = parseFloat(element.style.top);
+        
+        // Update position
+        left += bossTarget.dx;
+        top += bossTarget.dy;
+        
+        // Bounce off walls
+        if (left <= 0 || left + bossRect.width >= rect.width) {
+            bossTarget.dx *= -1;
+        }
+        if (top <= 0 || top + bossRect.height >= rect.height) {
+            bossTarget.dy *= -1;
+        }
+        
+        // Apply new position
+        element.style.left = `${left}px`;
+        element.style.top = `${top}px`;
+    }
+
     hitTarget(targetInfo) {
         const damage = gameState.combo * (gameState.activePowerUp ? 
             powerUps[gameState.activePowerUp].multiplier : 1);
@@ -124,6 +225,12 @@ export class TargetManager {
         
         gameState.activeTargets = gameState.activeTargets.filter(t => t !== targetInfo);
         this.spawnNewWave();
+        
+        // Clear boss movement if it was the last boss
+        if (gameState.activeTargets.length === 0 && this.bossMovementInterval) {
+            clearInterval(this.bossMovementInterval);
+            this.bossMovementInterval = null;
+        }
     }
 }
 

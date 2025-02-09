@@ -26,6 +26,13 @@ export const powerUps = {
     shakeSmash: { icon: '📱', multiplier: 2.5, duration: 4000 }
 };
 
+export const BOSS_IMAGES = [
+    '/images/traviskelce.jpg',
+    '/images/izaiahgathings.jpg',
+    '/images/tyreekhill.jpg',
+    '/images/taylor.jpg',
+];
+
 export const targets = {
     basic: [
         { name: 'trash_can', icon: '🗑️', points: 10, health: 2 },
@@ -38,9 +45,9 @@ export const targets = {
         { name: 'food_truck', icon: '🚚', points: 100, health: 15 }
     ],
     boss: [
-        { name: 'city_hall', icon: '🏛️', points: 500, health: 50 },
-        { name: 'liberty_bell', icon: '🔔', points: 750, health: 75 },
-        { name: 'art_museum', icon: '🏛️', points: 1000, health: 100 }
+        { name: 'city_hall', icon: null, points: 500, health: 50, isImageBoss: true },
+        { name: 'liberty_bell', icon: null, points: 750, health: 75, isImageBoss: true },
+        { name: 'art_museum', icon: null, points: 1000, health: 100, isImageBoss: true }
     ]
 };
 

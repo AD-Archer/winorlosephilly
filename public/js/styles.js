@@ -365,6 +365,72 @@ export function createStyles() {
         background: #ACC0C6;
         color: #004C54;
     }
+
+    .target.boss {
+        position: absolute;
+        transition: none;
+        z-index: 100;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+
+    .boss-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+        user-drag: none;
+        -webkit-user-drag: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+
+    .target.boss .health-bar {
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 0, 0, 0.3);
+        border-radius: 4px;
+        pointer-events: none;
+    }
+
+    .target.boss .health-fill {
+        height: 100%;
+        background: #ff0000;
+        border-radius: 4px;
+        transition: width 0.2s;
+        pointer-events: none;
+    }
+
+    .info-item.disclaimer {
+        grid-column: 1 / -1;
+        background: rgba(255, 235, 59, 0.1);
+        border: 1px solid rgba(255, 235, 59, 0.3);
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .info-item.disclaimer p {
+        margin: 10px 0;
+        font-size: 0.9em;
+        line-height: 1.4;
+    }
+
+    .info-item.disclaimer a {
+        color: #ACC0C6;
+        text-decoration: underline;
+        transition: color 0.2s;
+    }
+
+    .info-item.disclaimer a:hover {
+        color: #fff;
+    }
     `;
 
     document.head.appendChild(style);

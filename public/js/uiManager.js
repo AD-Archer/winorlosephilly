@@ -60,6 +60,14 @@ export class UIManager {
                             </div>
                         </div>
                     </div>
+                    <div class="info-item disclaimer">
+                        <h3>⚠️ Disclaimer</h3>
+                        <p>This site is a parody and is not meant to cause harm to anyone or anything. 
+                        It's all in good fun and celebration of sports rivalry.</p>
+                        <p>If you have concerns about this content, please contact: 
+                        <a href="mailto:aarch0004@launchpadphilly.org">aarch0004@launchpadphilly.org</a></p>
+                        <p>The site can and will be removed upon request.</p>
+                    </div>
                 </div>
             </div>
         `;
