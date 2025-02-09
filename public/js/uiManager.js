@@ -1,4 +1,5 @@
 import { soundManager } from './soundManager.js';
+import { gameState } from './gameState.js';
 
 export class UIManager {
     createSoundControls() {
@@ -16,7 +17,6 @@ export class UIManager {
     }
 
     setupGame() {
-        // ... existing game setup code ...
         
         const gameStats = document.getElementById('gameStats');
         if (gameStats) {
@@ -57,7 +57,8 @@ export class UIManager {
                         <ul>
                             <li>🎯 Chain hits to build combos</li>
                             <li>⭐ Higher combos = More points</li>
-                            <li>🏆 Current High Score: ${localStorage.getItem('highScore') || '0'}</li>
+                            <li>🏆 Current High Score: ${gameState.highScore}</li>
+                            <li>📈 Current Level: ${gameState.level}</li>
                         </ul>
                     </div>
                     <div class="info-item">
@@ -80,9 +81,9 @@ export class UIManager {
                                 <button id="toggleEffects" class="control-button">
                                     ${soundManager.effectsMuted ? '🔇' : '🔊'}
                                 </button>
-                                </div>
-                                </div>
-                                <p>You can also mute and unmute sounds in the top right</p>
+                            </div>
+                        </div>
+                        <p>You can also mute and unmute sounds in the top right</p>
                     </div>
                     <div class="info-item disclaimer">
                         <h3>⚠️ Disclaimer</h3>
@@ -157,6 +158,12 @@ export class UIManager {
         if (startBtn) {
             startBtn.remove();
         }
+    }
+
+    updateDisplay() {
+        document.getElementById('scoreDisplay').textContent = gameState.score;
+        document.getElementById('highScoreDisplay').textContent = gameState.highScore;
+        document.getElementById('levelDisplay').textContent = gameState.level;
     }
 }
 

@@ -56,6 +56,11 @@ export class GameState {
         }
         this.updateComboDisplay();
     }
+
+    increaseLevel() {
+        this.level++;
+        this.updateDisplay(); // Ensure the display updates when the level increases
+    }
 }
 
 export const gameState = new GameState(); 
