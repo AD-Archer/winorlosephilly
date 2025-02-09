@@ -1,3 +1,5 @@
+import { soundManager } from './soundManager.js';
+
 export class UIManager {
     showWelcomeScreen() {
         document.getElementById('output').innerHTML = `
@@ -35,9 +37,70 @@ export class UIManager {
                             <li>🏆 Current High Score: ${localStorage.getItem('highScore') || '0'}</li>
                         </ul>
                     </div>
+                    <div class="info-item">
+                        <h3>Sound Settings</h3>
+                        <div class="sound-controls">
+                            <div class="sound-row">
+                                <label>🎵 Music Volume:</label>
+                                <input type="range" id="musicVolume" min="0" max="100" 
+                                    value="${(localStorage.getItem('musicVolume') || 30)}"
+                                />
+                                <button id="toggleMusic" class="control-button">
+                                    ${soundManager.musicMuted ? '🔇' : '🎵'}
+                                </button>
+                            </div>
+                            <div class="sound-row">
+                                <label>🔊 Effects Volume:</label>
+                                <input type="range" id="effectsVolume" min="0" max="100" 
+                                    value="${(localStorage.getItem('effectsVolume') || 50)}"
+                                />
+                                <button id="toggleEffects" class="control-button">
+                                    ${soundManager.effectsMuted ? '🔇' : '🔊'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
+
+        // Set up sound control listeners
+        this.setupSoundControls();
+    }
+
+    setupSoundControls() {
+        const musicVolume = document.getElementById('musicVolume');
+        const effectsVolume = document.getElementById('effectsVolume');
+        const toggleMusic = document.getElementById('toggleMusic');
+        const toggleEffects = document.getElementById('toggleEffects');
+
+        if (musicVolume) {
+            musicVolume.addEventListener('input', (e) => {
+                soundManager.setMusicVolume(e.target.value / 100);
+                localStorage.setItem('musicVolume', e.target.value);
+            });
+        }
+
+        if (effectsVolume) {
+            effectsVolume.addEventListener('input', (e) => {
+                soundManager.setEffectsVolume(e.target.value / 100);
+                localStorage.setItem('effectsVolume', e.target.value);
+            });
+        }
+
+        if (toggleMusic) {
+            toggleMusic.addEventListener('click', () => {
+                soundManager.toggleMusic();
+                toggleMusic.textContent = soundManager.musicMuted ? '🔇' : '🎵';
+            });
+        }
+
+        if (toggleEffects) {
+            toggleEffects.addEventListener('click', () => {
+                soundManager.toggleEffects();
+                toggleEffects.textContent = soundManager.effectsMuted ? '🔇' : '🔊';
+            });
+        }
     }
 
     createStartButton(onStart) {

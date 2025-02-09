@@ -3,8 +3,16 @@ import { SOUNDS } from './constants.js';
 export class SoundManager {
     constructor() {
         this.sounds = {};
-        this.muted = localStorage.getItem('soundMuted') === 'true';
         this.soundsLoaded = false;
+        this.backgroundMusic = null;
+        
+        // Separate mute states for music and effects
+        this.musicMuted = localStorage.getItem('musicMuted') === 'true';
+        this.effectsMuted = localStorage.getItem('effectsMuted') === 'true';
+        
+        // Volume levels
+        this.musicVolume = localStorage.getItem('musicVolume') / 100 || 0.3;
+        this.effectsVolume = localStorage.getItem('effectsVolume') / 100 || 0.5;
     }
 
     async initAudio() {
@@ -18,7 +26,8 @@ export class SoundManager {
             return true;
         } catch (error) {
             console.error('Error initializing audio:', error);
-            this.muted = true; // Mute if audio fails to initialize
+            this.musicMuted = true; // Mute if audio fails to initialize
+            this.effectsMuted = true; // Mute if audio fails to initialize
             return false;
         }
     }
@@ -29,11 +38,14 @@ export class SoundManager {
                 const audio = new Audio(config.src);
                 audio.volume = config.volume;
                 
-                // Create a promise that resolves when the audio is loaded
+                if (key === 'background') {
+                    audio.loop = true;  // Use native loop
+                    this.backgroundMusic = audio;
+                }
+                
                 await new Promise((resolve, reject) => {
                     audio.addEventListener('canplaythrough', resolve);
                     audio.addEventListener('error', reject);
-                    // Set a timeout in case loading takes too long
                     setTimeout(reject, 5000);
                 });
                 
@@ -47,6 +59,7 @@ export class SoundManager {
         try {
             await Promise.all(loadPromises);
             this.soundsLoaded = true;
+            this.playBackgroundMusic();
         } catch (error) {
             console.error('Error loading sounds:', error);
             this.soundsLoaded = false;
@@ -64,20 +77,47 @@ export class SoundManager {
             const muteBtn = document.createElement('button');
             muteBtn.id = 'muteButton';
             muteBtn.className = 'control-button';
-            muteBtn.innerHTML = this.muted ? '🔇' : '🔊';
-            muteBtn.onclick = () => this.toggleMute();
+            muteBtn.innerHTML = this.musicMuted ? '🔇' : '🎵';
+            muteBtn.onclick = () => this.toggleMusic();
             gameStats.appendChild(muteBtn);
         }
     }
 
+    setMusicVolume(volume) {
+        this.musicVolume = volume;
+        if (this.backgroundMusic) {
+            this.backgroundMusic.volume = volume * SOUNDS.background.volume;
+        }
+    }
+
+    setEffectsVolume(volume) {
+        this.effectsVolume = volume;
+    }
+
+    toggleMusic() {
+        this.musicMuted = !this.musicMuted;
+        localStorage.setItem('musicMuted', this.musicMuted);
+        
+        if (this.musicMuted) {
+            this.backgroundMusic?.pause();
+        } else {
+            this.playBackgroundMusic();
+        }
+    }
+
+    toggleEffects() {
+        this.effectsMuted = !this.effectsMuted;
+        localStorage.setItem('effectsMuted', this.effectsMuted);
+    }
+
     play(soundName) {
-        if (this.muted || !this.sounds[soundName] || !this.soundsLoaded) {
+        if (this.effectsMuted || !this.sounds[soundName] || !this.soundsLoaded || soundName === 'background') {
             return;
         }
         
         try {
             const sound = this.sounds[soundName].cloneNode();
-            sound.volume = SOUNDS[soundName].volume;
+            sound.volume = SOUNDS[soundName].volume * this.effectsVolume;
             sound.play().catch(err => {
                 console.warn(`Failed to play sound ${soundName}:`, err);
             });
@@ -87,12 +127,15 @@ export class SoundManager {
         }
     }
 
-    toggleMute() {
-        this.muted = !this.muted;
-        localStorage.setItem('soundMuted', this.muted);
-        const muteButton = document.getElementById('muteButton');
-        if (muteButton) {
-            muteButton.innerHTML = this.muted ? '🔇' : '🔊';
+    playBackgroundMusic() {
+        if (!this.backgroundMusic || this.musicMuted) return;
+        
+        this.backgroundMusic.currentTime = 0;
+        this.backgroundMusic.volume = this.musicVolume * SOUNDS.background.volume;
+        
+        const promise = this.backgroundMusic.play();
+        if (promise) {
+            promise.catch(err => console.warn('Failed to play background music:', err));
         }
     }
 }

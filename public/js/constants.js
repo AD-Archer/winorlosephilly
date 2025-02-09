@@ -46,27 +46,28 @@ export const targets = {
 
 export const SOUNDS = {
     click: {
-        src: 'https://cdn.freesound.org/previews/242/242501_3509815-lq.mp3',
-        volume: 0.4
+        src: 'sounds/click.wav',
+        volume: 0.5
     },
     destroy: {
-        src: 'https://cdn.freesound.org/previews/435/435416_8942880-lq.mp3',
-        volume: 0.5
-    },
-    powerup: {
-        src: 'https://cdn.freesound.org/previews/320/320655_5260872-lq.mp3',
+        src: 'sounds/destroy.wav',
         volume: 0.6
     },
-    swipe: {
-        src: 'https://cdn.freesound.org/previews/350/350428_5121236-lq.mp3',
-        volume: 0.3
-    },
-    levelUp: {
-        src: 'https://cdn.freesound.org/previews/270/270404_5123851-lq.mp3',
+    powerup: {
+        src: 'sounds/powerup.wav',
         volume: 0.7
     },
+    levelUp: {
+        src: 'sounds/levelup.wav',
+        volume: 0.8
+    },
     eagleScream: {
-        src: 'https://cdn.freesound.org/previews/163/163090_2263032-lq.mp3',
-        volume: 0.5
+        src: 'sounds/eagle.wav',
+        volume: 0.6
+    },
+    background: {
+        src: 'sounds/blow.wav',
+        volume: 0.3,  // Lower volume for background music
+        loop: true    // Enable looping
     }
 }; 

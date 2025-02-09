@@ -311,6 +311,60 @@ export function createStyles() {
             padding: 10px;
         }
     }
+
+    .sound-controls {
+        padding: 10px;
+    }
+
+    .sound-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+    }
+
+    .sound-row label {
+        min-width: 120px;
+        text-align: right;
+    }
+
+    .sound-row input[type="range"] {
+        flex: 1;
+        height: 8px;
+        background: #ACC0C6;
+        border-radius: 4px;
+        outline: none;
+        -webkit-appearance: none;
+    }
+
+    .sound-row input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #004C54;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .sound-row input[type="range"]::-webkit-slider-thumb:hover {
+        background: #ACC0C6;
+    }
+
+    .control-button {
+        background: none;
+        border: 2px solid #ACC0C6;
+        color: #ACC0C6;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .control-button:hover {
+        background: #ACC0C6;
+        color: #004C54;
+    }
     `;
 
     document.head.appendChild(style);
