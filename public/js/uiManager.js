@@ -1,6 +1,29 @@
 import { soundManager } from './soundManager.js';
 
 export class UIManager {
+    createSoundControls() {
+        const soundControls = document.createElement('div');
+        soundControls.className = 'sound-controls';
+        soundControls.innerHTML = `
+            <button id="toggleMusic" class="control-button">
+                ${soundManager.musicMuted ? '🔇' : '🎵'}
+            </button>
+            <button id="toggleEffects" class="control-button">
+                ${soundManager.effectsMuted ? '🔇' : '🔊'}
+            </button>
+        `;
+        return soundControls;
+    }
+
+    setupGame() {
+        // ... existing game setup code ...
+        
+        const gameStats = document.getElementById('gameStats');
+        if (gameStats) {
+            gameStats.appendChild(this.createSoundControls());
+        }
+    }
+
     showWelcomeScreen() {
         document.getElementById('output').innerHTML = `
             <h1 class="eagles-font">The big game is over ready to see the results?</h1>
@@ -57,8 +80,9 @@ export class UIManager {
                                 <button id="toggleEffects" class="control-button">
                                     ${soundManager.effectsMuted ? '🔇' : '🔊'}
                                 </button>
-                            </div>
-                        </div>
+                                </div>
+                                </div>
+                                <p>You can also mute and unmute sounds in the top right</p>
                     </div>
                     <div class="info-item disclaimer">
                         <h3>⚠️ Disclaimer</h3>
@@ -72,7 +96,6 @@ export class UIManager {
             </div>
         `;
 
-        // Set up sound control listeners
         this.setupSoundControls();
     }
 

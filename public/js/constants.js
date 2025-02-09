@@ -59,11 +59,11 @@ export const SOUNDS = {
     },
     destroy: {
         src: 'sounds/destroy.wav',
-        volume: 0.6
+        volume: 0.5
     },
     powerup: {
         src: 'sounds/powerup.wav',
-        volume: 0.7
+        volume: 0.5
     },
     levelUp: {
         src: 'sounds/level-up.wav',

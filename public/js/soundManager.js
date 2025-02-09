@@ -17,17 +17,15 @@ export class SoundManager {
 
     async initAudio() {
         try {
-            console.log('Initializing audio');
-            const silentSound = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//MUZAAAAAGkAAAAAAAAA0gAAAAATEFN//MUZAMAAAGkAAAAAAAAA0gAAAAARTMu//MUZAYAAAGkAAAAAAAAA0gAAAAAOTku//MUZAkAAAGkAAAAAAAAA0gAAAAANVVV");
-            await silentSound.play();
-            console.log('Silent sound played successfully');
+            // Create and play a silent audio context to enable audio
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            await audioContext.resume();
+            
+            // Load all sounds after audio is enabled
             await this.loadSounds();
-            console.log('Audio initialization complete');
             return true;
         } catch (error) {
-            console.error('Error initializing audio:', error);
-            this.musicMuted = true; // Mute if audio fails to initialize
-            this.effectsMuted = true; // Mute if audio fails to initialize
+            console.error('Failed to initialize audio:', error);
             return false;
         }
     }
@@ -39,8 +37,10 @@ export class SoundManager {
                 const audio = new Audio(config.src);
                 audio.volume = config.volume;
                 
-                if (config.loop) {
+                if (key === 'background') {
                     audio.loop = true;
+                    this.backgroundMusic = audio;
+                    console.log('Background music loaded:', this.backgroundMusic);
                 }
                 
                 await new Promise((resolve, reject) => {
@@ -49,7 +49,7 @@ export class SoundManager {
                         console.error(`Error loading sound ${key}:`, e);
                         reject(e);
                     });
-                    audio.load(); // Explicitly load the audio
+                    audio.load();
                 });
                 
                 this.sounds[key] = audio;
@@ -62,28 +62,13 @@ export class SoundManager {
         try {
             await Promise.all(loadPromises);
             this.soundsLoaded = true;
-            this.playBackgroundMusic();
+            if (!this.musicMuted) {
+                await this.playBackgroundMusic();
+            }
             console.log('All sounds loaded successfully');
         } catch (error) {
             console.error('Error loading sounds:', error);
             this.soundsLoaded = false;
-        }
-    }
-
-    addMuteButton() {
-        const gameStats = document.getElementById('gameStats');
-        if (!gameStats) {
-            console.error('gameStats element not found');
-            return;
-        }
-
-        if (!document.getElementById('muteButton')) {
-            const muteBtn = document.createElement('button');
-            muteBtn.id = 'muteButton';
-            muteBtn.className = 'control-button';
-            muteBtn.innerHTML = this.musicMuted ? '🔇' : '🎵';
-            muteBtn.onclick = () => this.toggleMusic();
-            gameStats.appendChild(muteBtn);
         }
     }
 
@@ -102,6 +87,11 @@ export class SoundManager {
         this.musicMuted = !this.musicMuted;
         localStorage.setItem('musicMuted', this.musicMuted);
         
+        // Update all music toggle buttons
+        document.querySelectorAll('#toggleMusic').forEach(btn => {
+            btn.textContent = this.musicMuted ? '🔇' : '🎵';
+        });
+        
         if (this.musicMuted) {
             this.backgroundMusic?.pause();
         } else {
@@ -112,6 +102,11 @@ export class SoundManager {
     toggleEffects() {
         this.effectsMuted = !this.effectsMuted;
         localStorage.setItem('effectsMuted', this.effectsMuted);
+        
+        // Update all effects toggle buttons
+        document.querySelectorAll('#toggleEffects').forEach(btn => {
+            btn.textContent = this.effectsMuted ? '🔇' : '🔊';
+        });
     }
 
     play(soundName) {
@@ -139,15 +134,20 @@ export class SoundManager {
         }
     }
 
-    playBackgroundMusic() {
-        if (!this.backgroundMusic || this.musicMuted) return;
+    async playBackgroundMusic() {
+        if (!this.backgroundMusic || this.musicMuted) {
+            console.log('Background music is muted or not loaded. Mute state:', this.musicMuted);
+            return;
+        }
         
-        this.backgroundMusic.currentTime = 0;
-        this.backgroundMusic.volume = this.musicVolume * SOUNDS.background.volume;
-        
-        const promise = this.backgroundMusic.play();
-        if (promise) {
-            promise.catch(err => console.warn('Failed to play background music:', err));
+        try {
+            this.backgroundMusic.currentTime = 0;
+            this.backgroundMusic.volume = this.musicVolume * SOUNDS.background.volume;
+            
+            await this.backgroundMusic.play();
+            console.log('Background music started successfully');
+        } catch (err) {
+            console.warn('Failed to play background music:', err);
         }
     }
 }

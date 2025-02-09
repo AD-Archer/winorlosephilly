@@ -27,10 +27,54 @@ class Game {
                 console.log('Audio initialized');
                 uiManager.removeStartButton();
                 this.boundSetupGame();
+                // Play background music after starting the game
+                await soundManager.playBackgroundMusic();
             } catch (error) {
                 console.error('Error starting game:', error);
             }
         });
+
+        // Create mute button for music
+        const musicMuteButton = document.createElement('button');
+        musicMuteButton.id = 'toggleMusic';
+        musicMuteButton.textContent = '🎵'; // Music note icon
+        musicMuteButton.addEventListener('click', () => {
+            soundManager.toggleMusic();
+            musicMuteButton.textContent = soundManager.musicMuted ? '🔇' : '🎵'; // Update button text
+        });
+
+        // Set styles for the music mute button
+        musicMuteButton.style.position = 'fixed';
+        musicMuteButton.style.top = '10px';
+        musicMuteButton.style.right = '10px';
+        musicMuteButton.style.zIndex = '1000';
+        musicMuteButton.style.padding = '10px';
+        musicMuteButton.style.fontSize = '20px';
+        musicMuteButton.style.cursor = 'pointer';
+
+        // Append the music mute button to the body
+        document.body.appendChild(musicMuteButton);
+
+        // Create mute button for sound effects
+        const effectsMuteButton = document.createElement('button');
+        effectsMuteButton.id = 'toggleEffects';
+        effectsMuteButton.textContent = '🔊'; // Initial state (unmuted)
+        effectsMuteButton.addEventListener('click', () => {
+            soundManager.toggleEffects();
+            effectsMuteButton.textContent = soundManager.effectsMuted ? '🔇' : '🔊'; // Update button text
+        });
+
+        // Set styles for the effects mute button
+        effectsMuteButton.style.position = 'fixed';
+        effectsMuteButton.style.top = '50px'; // Adjust position as needed
+        effectsMuteButton.style.right = '10px';
+        effectsMuteButton.style.zIndex = '1000';
+        effectsMuteButton.style.padding = '10px';
+        effectsMuteButton.style.fontSize = '20px';
+        effectsMuteButton.style.cursor = 'pointer';
+
+        // Append the effects mute button to the body
+        document.body.appendChild(effectsMuteButton);
     }
 
     setupGame() {
@@ -52,8 +96,11 @@ class Game {
             <div id="comboDisplay"></div>
         `;
 
-        // Add mute button after gameStats exists
-        soundManager.addMuteButton();
+        // Add sound controls
+        const gameStats = document.getElementById('gameStats');
+        if (gameStats) {
+            gameStats.appendChild(uiManager.createSoundControls());
+        }
 
         console.log('Initializing game systems');
         timerManager.init();
