@@ -8,14 +8,21 @@ export const MOBILE_GESTURES = {
 
 export const scenarios = {
     win: [
-        "SMASH THE LIBERTY BELL WITH JALEN HURTS' HELMET!",
-        "BOWL OVER CITY HALL WITH A FLYING EAGLE!",
-        "COVER THE ART MUSEUM IN MIDNIGHT GREEN CONFETTI!"
+        "FLY EAGLES FLY!",
+        "THATS SAQUON BARKLEY YB!", // for those unaware of the philly slang yb stands for young bull, or young boy its a term of endearment.
+        "WE BLEED GREEN!",
+        "WE ON BROAD STREET!",
+        "HOST A PARADE FOR THE FLYING PHILLY PHANATIC!",
+        "Its a Philly thing!",
+        "E.L.G.S.E.S. EAGLES!" // Incase you didn't know Phialdelphias current mayor(2025) cannot spell Eagles https://www.cbsnews.com/philadelphia/news/philadelphia-mayor-misspells-eagles-chant/
     ],
-    lose: [
+    lose: [ // i intend to source more lose scenarios from people i know in real life. 
         "ACCIDENTALLY START A SOFT PRETZEL RIOT!",
         "TRIGGER A CHEESESTEAK GREASE TSUNAMI!",
-        "RELEASE A HORDE OF ANGRY PHILLY PHANATICS!"
+        "RELEASE A HORDE OF ANGRY PHILLY PHANATICS!",
+        "GET STUCK IN A NEVER-ENDING LINE FOR WATER ICE!",
+        "HAVE A PIZZA FIGHT AT THE LIBERTY BELL!",
+        "FIND YOURSELF IN A BATTLE WITH A RIVAL FAN OVER A TASTY CAKE!"
     ]
 };
 

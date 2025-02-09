@@ -29,7 +29,9 @@ export class UIManager {
         }
     }
 
-    showWelcomeScreen() {
+// Rest in peace, Tyler Sabapathy. You will be remembered for your spirit and the impact you made. Our thoughts are with your family and friends during this difficult time.
+// lets avoid more mistakes like this by having a different way to show philly pride
+showWelcomeScreen() {
         document.getElementById('output').innerHTML = `
             <h1 class="eagles-font">The big game is over ready to see the results?</h1>
             <div class="warning-message">
