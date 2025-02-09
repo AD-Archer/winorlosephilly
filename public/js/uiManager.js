@@ -34,6 +34,7 @@ export class UIManager {
 showWelcomeScreen() {
         document.getElementById('output').innerHTML = `
             <h1 class="eagles-font">The big game is over ready to see the results?</h1>
+            <button id="startButton" class="start-button">RESULTS</button>
             <div class="warning-message">
                 ⚠️ PLEASE NOTE: This is a parody game. We love Philadelphia! 
                 Please celebrate responsibly and keep our city safe! ⚠️
@@ -143,11 +144,7 @@ showWelcomeScreen() {
     }
 
     createStartButton(onStart) {
-        console.log('Creating start button');
-        const startBtn = document.createElement('button');
-        startBtn.id = 'startButton';
-        startBtn.className = 'start-button';
-        startBtn.textContent = 'RESULTS!';
+        const startBtn = document.getElementById('startButton');
         startBtn.addEventListener('click', async () => {
             console.log('Start button clicked');
             try {
@@ -156,7 +153,7 @@ showWelcomeScreen() {
                 console.error('Error in start button handler:', error);
             }
         });
-        document.getElementById('output').appendChild(startBtn);
+        // document.getElementById('output').appendChild(startBtn);
         console.log('Start button added to DOM');
     }
 

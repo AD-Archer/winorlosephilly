@@ -9,7 +9,11 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": ["Philadelphia Eagles", "Super Bowl", "Destruction Derby"],
+  "keywords": [
+    "Philadelphia Eagles",
+    "Super Bowl",
+    "Destruction Derby"
+  ],
   "author": "ad-archer",
   "license": "MIT",
   "dependencies": {
