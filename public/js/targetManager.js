@@ -258,22 +258,15 @@ export class TargetManager {
         // Add special hit effect for moving targets
         if (targetInfo.moves) {
             const element = targetInfo.element;
-            element.style.animation = 'none';
-            element.offsetHeight; // Trigger reflow
-            element.style.animation = 'float 2s infinite ease-in-out';
+            const iconContainer = element.querySelector('.target-icon');
             
+            // Add flash effect to the icon container instead of the whole target
             const flash = document.createElement('div');
             flash.className = 'flash';
-            flash.style.cssText = `
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                background: white;
-                opacity: 0.8;
-                pointer-events: none;
-            `;
-            element.appendChild(flash);
-            setTimeout(() => flash.remove(), 100);
+            iconContainer.appendChild(flash);
+            
+            // Remove flash after animation
+            flash.addEventListener('animationend', () => flash.remove());
         }
         
         if (targetInfo.health <= 0) {

@@ -496,6 +496,25 @@ export function createStyles() {
         font-size: 0.8em;
         opacity: 0.8;
     }
+
+    .flash {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: white;
+        opacity: 0.8;
+        pointer-events: none;
+        z-index: 2;
+        border-radius: 50%;
+        animation: flash 0.1s forwards;
+    }
+
+    @keyframes flash {
+        from { opacity: 0.8; }
+        to { opacity: 0; }
+    }
     `;
 
     document.head.appendChild(style);
