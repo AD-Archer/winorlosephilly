@@ -9,7 +9,6 @@
 - [Setup and Installation](#setup-and-installation)
 - [How to Play](#how-to-play)
 - [Tribute](#tribute)
-- [Credits](#credits)
 - [License](#license)
 
 ## Overview
@@ -66,12 +65,6 @@ Tyler’s passion for life and his community continue to inspire us.
 You can play the game online at:  
 [https://winorlosephilly.vercel.app/](https://winorlosephilly.vercel.app/)
 
-## Credits
-
-- **Developer:** [Your Name or Team Name]
-- **Design:** [Designer Name]
-- **Special Thanks:** To the fans and supporters who have made this project possible.
-- **Inspiration:** The pride of Philadelphia and the energy of the 2025 Super Bowl showdown.
 
 ## License
 
