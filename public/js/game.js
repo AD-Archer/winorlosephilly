@@ -7,9 +7,11 @@ import { mobileControls } from './mobileControls.js';
 import { scenarios } from './constants.js';
 import { uiManager } from './uiManager.js';
 import { timerManager } from './timerManager.js';
+import { initAnalytics, trackEvent } from './analytics.js';
 
 class Game {
     constructor() {
+        initAnalytics();
         createStyles();
         this.initializeUI();
         // Bind the setupGame method to this instance
@@ -23,6 +25,7 @@ class Game {
         uiManager.createStartButton(async () => {
             try {
                 console.log('Start button clicked');
+                trackEvent('Game Start', { entryPoint: 'welcome-screen' });
                 await soundManager.initAudio();
                 console.log('Audio initialized');
                 uiManager.removeStartButton();
@@ -98,6 +101,11 @@ class Game {
         const scenario = scenarios[gameState.gameResult][
             Math.floor(Math.random() * scenarios[gameState.gameResult].length)
         ];
+
+        trackEvent('Round Loaded', {
+            openingOutcome: gameState.gameResult,
+            level: gameState.level
+        });
         
         document.getElementById('output').innerHTML = `
             <h1 class="${gameState.gameResult}">THE BIRDS ${gameState.gameResult.toUpperCase()}!</h1>
@@ -149,4 +157,3 @@ window.onload = () => {
     console.log('Window loaded, creating game instance');
     new Game();
 };
-

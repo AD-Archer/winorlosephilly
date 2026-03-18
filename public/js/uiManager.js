@@ -70,6 +70,11 @@ showWelcomeScreen() {
                         </ul>
                     </div>
                     <div class="info-item">
+                        <h3>Creator & Contact</h3>
+                        <p>Created by <a href="https://www.antonioarcher.com" target="_blank" rel="noreferrer">www.antonioarcher.com</a></p>
+                        <p>Contact: <a href="mailto:antonioarcher.dev@gmail.com">antonioarcher.dev@gmail.com</a></p>
+                    </div>
+                    <div class="info-item">
                         <h3>Sound Settings</h3>
                         <div class="sound-controls">
                             <div class="sound-row">
@@ -98,7 +103,7 @@ showWelcomeScreen() {
                         <p>This site is a parody and is not meant to cause harm to anyone or anything. 
                         It's all in good fun and celebration of sports rivalry.</p>
                         <p>If you have concerns about this content, please contact: 
-                        <a href="mailto:aarch0004@launchpadphilly.org">aarch0004@launchpadphilly.org</a></p>
+                        <a href="mailto:antonioarcher.dev@gmail.com">antonioarcher.dev@gmail.com</a></p>
                         <p>The site can and will be removed upon request.</p>
                     </div>
                 </div>

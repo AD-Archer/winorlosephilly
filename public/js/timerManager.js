@@ -1,4 +1,5 @@
 import { gameState } from './gameState.js'; // Ensure this import is present
+import { trackEvent } from './analytics.js';
 
 export class TimerManager {
     constructor() {
@@ -60,6 +61,11 @@ export class TimerManager {
     onTimeUp() {
         this.clearTimer();
         gameState.gameResult = 'lose'; // Set game result to lose
+        trackEvent('Game Over', {
+            score: gameState.score,
+            level: gameState.level,
+            result: gameState.gameResult
+        });
         alert(`Time's up! Game Over!\nFinal Score: ${gameState.score}`);
         location.reload(); // Restart the game
     }

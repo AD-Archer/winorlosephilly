@@ -1,6 +1,7 @@
 import { powerUps } from './constants.js';
 import { gameState } from './gameState.js';
 import { soundManager } from './soundManager.js';
+import { trackEvent } from './analytics.js';
 
 export class PowerUpManager {
     constructor() {
@@ -55,6 +56,10 @@ export class PowerUpManager {
         const powerUp = powerUps[type];
         gameState.activePowerUp = type;
         gameState.combo *= powerUp.multiplier;
+        trackEvent('Power-Up Activated', {
+            type,
+            multiplier: powerUp.multiplier
+        });
         
         this.clickArea.classList.add('powered-up');
         
